@@ -7,6 +7,10 @@
   --line-light: #ffffff33;
   --red: #d52b32;
   --blue: #244b8f;
+  --bg: #f7f7f4;
+  --text: #0a0c0f;
+  --muted-d: #5b616b;
+  --line-d: #0a0c0f26;
   --gutter: clamp(1.25rem, 4vw, 4.5rem);
 }
 
@@ -23,8 +27,8 @@ body {
 }
 
 body {
-  background: var(--ink);
-  color: var(--white);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-plex), Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -34,5 +38,5 @@ button {
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
