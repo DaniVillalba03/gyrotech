@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gyrotech — cohete 3D con giroscopio USB
 
-## Getting Started
+Página Next.js que muestra un cohete 3D (URUTAÚ III) y lo hace girar en tiempo real con los datos
+del giroscopio de la placa Arandu (STM32F722), leídos por USB serie desde el navegador.
 
-First, run the development server:
+## Uso
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre http://localhost:3000 en **Chrome o Edge** (usa la Web Serial API, que solo funciona en
+`localhost` o HTTPS). Pulsa **Conectar**, elige el puerto COM de la placa y deja la placa quieta unos
+segundos hasta que la tarjeta diga "Enlace activo". **Calibrar (R)** vuelve a poner el origen.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Datos esperados
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Una línea de texto por lectura, con el giroscopio en grados/s:
 
-## Learn More
+```
+Giroscopio (grados/s):     X 1.23   Y -4.56   Z 7.89
+Gyro[dps]: X=-3.2 Y=-2.0 Z=-1.3
+```
 
-To learn more about Next.js, take a look at the following resources:
+Ambos formatos se reconocen (`src/lib/gyroParser.ts`). Para un seguimiento fluido el firmware debe
+enviar la línea a ~60 Hz: `firmware/Task_Monitor.cpp` es el `Task_Monitor.cpp` del firmware con ese cambio.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Estructura
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app/page.tsx` — pantalla, controles y tarjeta de telemetría.
+- `src/hooks/useSerialGyro.ts` — conexión Web Serial y lectura de líneas.
+- `src/lib/gyroParser.ts` — análisis de las líneas del giroscopio.
+- `src/components/RocketScene.tsx` — escena 3D, modelo GLB, calibración e integración del giro.
+- `public/cohete.glb` — modelo del cohete.
 
-## Deploy on Vercel
+## Ajustes útiles (`src/components/RocketScene.tsx`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `AXIS_MAP` — qué eje del sensor mueve cada eje del cohete (según cómo esté montada la placa).
+- `GAIN` — sensibilidad del giro.
+- `FACE_Y` — lado del cohete que mira a la cámara al inicio.
+- `NOSE_FRACTION` — largo de la ojiva roja.
